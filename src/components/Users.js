@@ -1,7 +1,7 @@
 import { collection } from 'firebase/firestore';
 import React, { useEffect, useState } from 'react'
-import { db } from '../config/firebase-config';
-import { getUsers, addUser, updateUser } from '../db/userQueries';
+import { db, fireStore } from '../config/firebase-config';
+import { getUsers, addUser, updateUser, deleteUser } from '../db/userQueries';
 
 const initialData = {
     name: '',
@@ -22,6 +22,7 @@ function Users() {
             const users = await getUsers(usersColletionRef);
             setUsers(users);
         })();
+        fireStore.collection('users').onSnapshot(snapshot => console.log(snapshot));
     }, []);
 
     const inputHandler = (e) => {
@@ -44,6 +45,10 @@ function Users() {
         const user = users.find(user => user.id === id);
         setUser(user);
         setIsUpdateOn(true);
+    }
+
+    const deleteHandler = (id) => {
+        deleteUser(usersColletionRef, id);
     }
     
     console.log(users, 'data');
@@ -78,6 +83,9 @@ function Users() {
                     </div>
                     <div>
                         <button onClick={() => updateTrigger(user.id)} >Update</button>
+                    </div>
+                    <div>
+                        <button onClick={() => deleteHandler(user.id)} >Delete</button>
                     </div>
                 </li>
             ))}
