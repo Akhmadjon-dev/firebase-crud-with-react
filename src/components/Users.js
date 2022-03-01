@@ -1,6 +1,6 @@
 import { collection } from 'firebase/firestore';
 import React, { useEffect, useState } from 'react'
-import { db, fireStore } from '../config/firebase-config';
+import { db } from '../config/firebase-config';
 import { getUsers, addUser, updateUser, deleteUser } from '../db/userQueries';
 
 const initialData = {
@@ -22,7 +22,6 @@ function Users() {
             const users = await getUsers(usersColletionRef);
             setUsers(users);
         })();
-        fireStore.collection('users').onSnapshot(snapshot => console.log(snapshot));
     }, []);
 
     const inputHandler = (e) => {
