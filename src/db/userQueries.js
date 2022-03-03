@@ -1,9 +1,12 @@
-import { getDocs, addDoc, updateDoc, doc, deleteDoc } from "firebase/firestore";
+import { getDocs, addDoc, updateDoc, doc, deleteDoc, onSnapshot, collection } from "firebase/firestore";
 
 export const getUsers = async (usersColletionRef) => {
-    const data = await getDocs(usersColletionRef);
-    const users = data.docs.map(doc => ({...doc.data(), id: doc.id}))
-    return users;
+    let result = [];
+    onSnapshot(usersColletionRef, (doc) => {
+        const res =  doc.docs.map(i => ({ ...i.data(), id: i.id }))
+        result = res;
+    });
+    return result;
 }
 
 export const addUser = async(collectionRef, doc) => {
@@ -22,3 +25,5 @@ export const deleteUser = async(collectionRef, id) => {
     const docRef = await deleteDoc(userDoc);
     return docRef;
 }
+
+

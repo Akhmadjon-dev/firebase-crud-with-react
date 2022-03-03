@@ -1,4 +1,4 @@
-import { collection } from 'firebase/firestore';
+import { collection, onSnapshot } from 'firebase/firestore';
 import React, { useEffect, useState } from 'react'
 import { db } from '../config/firebase-config';
 import { getUsers, addUser, updateUser, deleteUser } from '../db/userQueries';
@@ -19,8 +19,12 @@ function Users() {
 
     useEffect(() => {
         (async () => {
-            const users = await getUsers(usersColletionRef);
-            setUsers(users);
+
+            onSnapshot(collection(db, 'users'), (doc) => {
+                const res =  doc.docs.map(i => ({ ...i.data(), id: i.id }))
+                setUsers(res);
+                console.log(res, 'res');
+            });
         })();
     }, []);
 
@@ -63,7 +67,7 @@ function Users() {
             <button type="submit">Create User</button>
         </form>
         <ul>
-            {users.map(user => (
+            {users?.map(user => (
                 <li key={user.id}>
                     <div>
                         <span>{user.name}</span>
